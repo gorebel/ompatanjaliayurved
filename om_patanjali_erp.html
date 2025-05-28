@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Om Patanjali - ERP System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .navbar {
+            background: linear-gradient(135deg, #2c5aa0 0%, #1e3f73 100%);
+            padding: 1rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .nav-btn {
+            background: transparent;
+            color: white;
+            border: 2px solid rgba(255,255,255,0.3);
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .nav-btn:hover, .nav-btn.active {
+            background: rgba(255,255,255,0.2);
+            border-color: white;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .page {
+            display: none;
+            padding: 30px;
+        }
+        
+        .page.active {
+            display: block;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 3px solid #2c5aa0;
+            padding-bottom: 15px;
+        }
+        
+        .shop-name {
+            font-size: 36px;
+            font-weight: bold;
+            color: #2c5aa0;
+            margin: 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .bill-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            background: white;
+        }
+        
+        .bill-table th {
+            background: linear-gradient(135deg, #2c5aa0 0%, #1e3f73 100%);
+            color: white;
+            padding: 15px 10px;
+            text-align: center;
+            font-weight: bold;
+            border: 2px solid #1e3f73;
+        }
+        
+        .bill-table td {
+            padding: 12px 10px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+        
+        .bill-table input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            text-align: center;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        
+        .bill-table input:focus {
+            outline: none;
+            border-color: #2c5aa0;
+            box-shadow: 0 0 5px rgba(44, 90, 160, 0.3);
+        }
+        
+        .total-row {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            font-weight: bold;
+            font-size: 16px;
+        }
+        
+        .total-row td {
+            border: 2px solid #2c5aa0;
+            color: #2c5aa0;
+        }
+        
+        .btn {
+            border: none;
+            padding: 12px 25px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            margin: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            transition: transform 0.2s;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+        
+        .btn-primary { background: linear-gradient(135deg, #007bff 0%, #0056b3 100%); color: white; }
+        .btn-success { background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white; }
+        .btn-danger { background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); color: white; }
+        .btn-warning { background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%); color: black; }
+        
+        .button-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .item-row {
+            transition: background-color 0.3s;
+        }
+        
+        .item-row:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .bill-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #2c5aa0;
+        }
+        
+        .search-box {
+            width: 100%;
+            max-width: 400px;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+        
+        .search-box:focus {
+            outline: none;
+            border-color: #2c5aa0;
+        }
+        
+        .bills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .bill-card {
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .bill-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+            border-color: #2c5aa0;
+        }
+        
+        .bill-card h3 {
+            color: #2c5aa0;
+            margin-bottom: 10px;
+        }
+        
+        .bill-meta {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+        
+        .bill-items {
+            max-height: 150px;
+            overflow-y: auto;
+            margin-bottom: 15px;
+        }
+        
+        .dashboard-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+        
+        .stat-number {
+            font-size: 32px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        
+        .stat-label {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        
+        .date-filter {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .date-filter input, .date-filter select {
+            padding: 8px 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        
+        @media (max-width: 768px) {
+            .nav-container {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .container {
+                margin: 10px;
+            }
+            
+            .page {
+                padding: 15px;
+            }
+            
+            .dashboard-stats {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media print {
+            .navbar, .button-container, .bill-info {
+                display: none;
+            }
+            .container {
+                box-shadow: none;
+                margin: 0;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">Om Patanjali ERP</div>
+            <div class="nav-links">
+                <button class="nav-btn active" onclick="showPage('billing')">New Bill</button>
+                <button class="nav-btn" onclick="showPage('history')">Bill History</button>
+                <button class="nav-btn" onclick="showPage('analytics')">Sales Analytics</button>
+                <button class="nav-btn" onclick="showPage('dashboard')">Dashboard</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Billing Page -->
+        <div id="billing" class="page active">
+            <div class="header">
+                <h1 class="shop-name">Om Patanjali</h1>
+            </div>
+            
+            <div class="bill-info">
+                <div>
+                    <strong>Bill No:</strong> <span id="billNumber"></span>
+                </div>
+                <div>
+                    <strong>Date:</strong> <span id="billDate"></span>
+                </div>
+                <div>
+                    <strong>Time:</strong> <span id="billTime"></span>
+                </div>
+            </div>
+            
+            <table class="bill-table" id="billTable">
+                <thead>
+                    <tr>
+                        <th style="width: 40%">Item Name</th>
+                        <th style="width: 20%">Price (₹)</th>
+                        <th style="width: 20%">Quantity</th>
+                        <th style="width: 20%">Total (₹)</th>
+                    </tr>
+                </thead>
+                <tbody id="billBody">
+                    <tr class="item-row">
+                        <td><input type="text" placeholder="Enter item name" onkeypress="handleEnter(event, this)"></td>
+                        <td><input type="number" step="0.01" min="0" placeholder="0.00" oninput="calculateRowTotal(this)" onkeypress="handleEnter(event, this)"></td>
+                        <td><input type="number" min="0" placeholder="0" oninput="calculateRowTotal(this)" onkeypress="handleEnter(event, this)"></td>
+                        <td class="total-cell">0.00</td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr class="total-row">
+                        <td colspan="2"><strong>TOTAL</strong></td>
+                        <td id="totalQuantity"><strong>0</strong></td>
+                        <td id="totalAmount"><strong>₹ 0.00</strong></td>
+                    </tr>
+                </tfoot>
+            </table>
+            
+            <div class="button-container">
+                <button class="btn btn-success" onclick="addNewRow()">Add New Item</button>
+                <button class="btn btn-primary" onclick="saveBill()" id="saveBillBtn">Save Bill</button>
+                <button class="btn btn-warning" onclick="printBill()">Print Bill</button>
+                <button class="btn btn-danger" onclick="clearBill()">Clear All</button>
+                <button class="btn btn-primary" onclick="cancelEdit()" id="cancelEditBtn" style="display: none;">Cancel Edit</button>
+            </div>
+        </div>
+
+        <!-- History Page -->
+        <div id="history" class="page">
+            <div class="header">
+                <h2>Bill History</h2>
+            </div>
+            
+            <div class="date-filter">
+                <input type="date" id="filterDate" onchange="filterBills()">
+                <select id="filterPeriod" onchange="filterBills()">
+                    <option value="all">All Time</option>
+                    <option value="today">Today</option>
+                    <option value="week">This Week</option>
+                    <option value="month">This Month</option>
+                </select>
+                <input type="text" class="search-box" id="searchBox" placeholder="Search bills by item name or bill number..." oninput="filterBills()">
+                <button class="btn btn-danger" onclick="clearAllBills()">Clear All History</button>
+            </div>
+            
+            <div id="billsContainer" class="bills-grid"></div>
+        </div>
+
+        <!-- Analytics Page -->
+        <div id="analytics" class="page">
+            <div class="header">
+                <h2>Sales Analytics</h2>
+            </div>
+            
+            <div class="dashboard-stats">
+                <div class="stat-card">
+                    <div class="stat-label">Today's Sales</div>
+                    <div class="stat-number" id="todaySales">₹ 0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">This Week</div>
+                    <div class="stat-number" id="weekSales">₹ 0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">This Month</div>
+                    <div class="stat-number" id="monthSales">₹ 0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Total Bills</div>
+                    <div class="stat-number" id="totalBills">0</div>
+                </div>
+            </div>
+            
+            <div class="date-filter">
+                <label>Custom Date Range:</label>
+                <input type="date" id="startDate">
+                <input type="date" id="endDate">
+                <button class="btn btn-primary" onclick="calculateCustomRange()">Calculate</button>
+            </div>
+            
+            <div id="customRangeResult" style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px; display: none;">
+                <h3>Custom Range Results:</h3>
+                <p><strong>Total Sales:</strong> <span id="customSales"></span></p>
+                <p><strong>Total Bills:</strong> <span id="customBillCount"></span></p>
+                <p><strong>Average Per Bill:</strong> <span id="customAverage"></span></p>
+            </div>
+        </div>
+
+        <!-- Dashboard Page -->
+        <div id="dashboard" class="page">
+            <div class="header">
+                <h2>Dashboard Overview</h2>
+            </div>
+            
+            <div class="dashboard-stats">
+                <div class="stat-card">
+                    <div class="stat-label">Total Revenue</div>
+                    <div class="stat-number" id="totalRevenue">₹ 0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Total Bills Created</div>
+                    <div class="stat-number" id="dashTotalBills">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Average Bill Value</div>
+                    <div class="stat-number" id="avgBillValue">₹ 0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Total Items Sold</div>
+                    <div class="stat-number" id="totalItemsSold">0</div>
+                </div>
+            </div>
+            
+            <div style="background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                <h3>Recent Activity</h3>
+                <div id="recentActivity"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let bills = JSON.parse(localStorage.getItem('omPatanjaliBills') || '[]');
+        let currentBillNumber = parseInt(localStorage.getItem('currentBillNumber') || '1');
+        let editingBillId = null; // Track which bill is being edited
+        
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            updateBillInfo();
+            document.querySelector('#billBody input').focus();
+            loadDashboard();
+            loadAnalytics();
+        });
+        
+        // Navigation functions
+        function showPage(pageId) {
+            // Hide all pages
+            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+            
+            // Show selected page
+            document.getElementById(pageId).classList.add('active');
+            event.target.classList.add('active');
+            
+            // Load page-specific data
+            if (pageId === 'history') loadBillHistory();
+            if (pageId === 'analytics') loadAnalytics();
+            if (pageId === 'dashboard') loadDashboard();
+        }
+        
+        // Billing functions
+        function updateBillInfo() {
+            const now = new Date();
+            document.getElementById('billNumber').textContent = `OP-${currentBillNumber.toString().padStart(4, '0')}`;
+            document.getElementById('billDate').textContent = now.toLocaleDateString('en-IN');
+            document.getElementById('billTime').textContent = now.toLocaleTimeString('en-IN');
+        }
+        
+        function calculateRowTotal(input) {
+            const row = input.closest('tr');
+            const priceInput = row.cells[1].querySelector('input');
+            const quantityInput = row.cells[2].querySelector('input');
+            const totalCell = row.cells[3];
+            
+            const price = parseFloat(priceInput.value) || 0;
+            const quantity = parseInt(quantityInput.value) || 0;
+            const total = price * quantity;
+            
+            totalCell.textContent = total.toFixed(2);
+            calculateGrandTotal();
+        }
+        
+        function calculateGrandTotal() {
+            const rows = document.querySelectorAll('#billBody tr');
+            let totalQuantity = 0;
+            let totalAmount = 0;
+            
+            rows.forEach(row => {
+                const quantityInput = row.cells[2].querySelector('input');
+                const totalCell = row.cells[3];
+                
+                const quantity = parseInt(quantityInput.value) || 0;
+                const amount = parseFloat(totalCell.textContent) || 0;
+                
+                totalQuantity += quantity;
+                totalAmount += amount;
+            });
+            
+            document.getElementById('totalQuantity').innerHTML = '<strong>' + totalQuantity + '</strong>';
+            document.getElementById('totalAmount').innerHTML = '<strong>₹ ' + totalAmount.toFixed(2) + '</strong>';
+        }
+        
+        function addNewRow() {
+            const tbody = document.getElementById('billBody');
+            const newRow = document.createElement('tr');
+            newRow.className = 'item-row';
+            newRow.innerHTML = `
+                <td><input type="text" placeholder="Enter item name" onkeypress="handleEnter(event, this)"></td>
+                <td><input type="number" step="0.01" min="0" placeholder="0.00" oninput="calculateRowTotal(this)" onkeypress="handleEnter(event, this)"></td>
+                <td><input type="number" min="0" placeholder="0" oninput="calculateRowTotal(this)" onkeypress="handleEnter(event, this)"></td>
+                <td class="total-cell">0.00</td>
+            `;
+            tbody.appendChild(newRow);
+            newRow.cells[0].querySelector('input').focus();
+        }
+        
+        function handleEnter(event, input) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                const row = input.closest('tr');
+                const currentCell = input.closest('td');
+                const currentCellIndex = Array.from(row.cells).indexOf(currentCell);
+                
+                if (currentCellIndex === 2) {
+                    addNewRow();
+                } else {
+                    const nextCell = row.cells[currentCellIndex + 1];
+                    if (nextCell && nextCell.querySelector('input')) {
+                        nextCell.querySelector('input').focus();
+                    }
+                }
+            }
+        }
+        
+        function saveBill() {
+            const rows = document.querySelectorAll('#billBody tr');
+            const items = [];
+            let totalAmount = 0;
+            let totalQuantity = 0;
+            
+            rows.forEach(row => {
+                const name = row.cells[0].querySelector('input').value.trim();
+                const price = parseFloat(row.cells[1].querySelector('input').value) || 0;
+                const quantity = parseInt(row.cells[2].querySelector('input').value) || 0;
+                const total = parseFloat(row.cells[3].textContent) || 0;
+                
+                if (name && price > 0 && quantity > 0) {
+                    items.push({ name, price, quantity, total });
+                    totalAmount += total;
+                    totalQuantity += quantity;
+                }
+            });
+            
+            if (items.length === 0) {
+                alert('Please add at least one item to save the bill.');
+                return;
+            }
+            
+            if (editingBillId) {
+                // Update existing bill
+                const billIndex = bills.findIndex(bill => bill.id === editingBillId);
+                if (billIndex !== -1) {
+                    bills[billIndex] = {
+                        ...bills[billIndex],
+                        items: items,
+                        totalAmount: totalAmount,
+                        totalQuantity: totalQuantity,
+                        lastModified: new Date().toISOString()
+                    };
+                    
+                    localStorage.setItem('omPatanjaliBills', JSON.stringify(bills));
+                    alert(`Bill ${editingBillId} updated successfully! Total: ₹${totalAmount.toFixed(2)}`);
+                    
+                    // Reset editing mode
+                    editingBillId = null;
+                    document.getElementById('saveBillBtn').textContent = 'Save Bill';
+                    document.getElementById('cancelEditBtn').style.display = 'none';
+                    
+                    clearBill();
+                    updateBillInfo();
+                }
+            } else {
+                // Create new bill
+                const bill = {
+                    id: `OP-${currentBillNumber.toString().padStart(4, '0')}`,
+                    date: new Date().toISOString(),
+                    items: items,
+                    totalAmount: totalAmount,
+                    totalQuantity: totalQuantity
+                };
+                
+                bills.push(bill);
+                localStorage.setItem('omPatanjaliBills', JSON.stringify(bills));
+                
+                currentBillNumber++;
+                localStorage.setItem('currentBillNumber', currentBillNumber.toString());
+                
+                alert(`Bill ${bill.id} saved successfully! Total: ₹${totalAmount.toFixed(2)}`);
+                
+                clearBill();
+                updateBillInfo();
+            }
+        }
+        
+        function printBill() {
+            window.print();
+        }
+        
+        function clearBill() {
+            if (document.querySelectorAll('#billBody tr').length > 1 || 
+                document.querySelector('#billBody input').value !== '') {
+                if (!confirm('Are you sure you want to clear all items?')) {
+                    return;
+                }
+            }
+            
+            const tbody = document.getElementById('billBody');
+            tbody.innerHTML = `
+                <tr class="item-row">
+                    <td><input type="text" placeholder="Enter item name" onkeypress="handleEnter(event, this)"></td>
+                    <td><input type="number" step="0.01" min="0" placeholder="0.00" oninput="calculateRowTotal(this)" onkeypress="handleEnter(event, this)"></td>
+                    <td><input type="number" min="0" placeholder="0" oninput="calculateRowTotal(this)" onkeypress="handleEnter(event, this)"></td>
+                    <td class="total-cell">0.00</td>
+                </tr>
+            `;
+            calculateGrandTotal();
+            tbody.querySelector('input').focus();
+        }
+        
+        // History functions
+        function loadBillHistory() {
+            const container = document.getElementById('billsContainer');
+            
+            if (bills.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #666; font-size: 18px;">No bills found. Create your first bill!</p>';
+                return;
+            }
+            
+            displayBills(bills.slice().reverse());
+        }
+        
+        function displayBills(billsToShow) {
+            const container = document.getElementById('billsContainer');
+            
+            if (billsToShow.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #666;">No bills match your filter criteria.</p>';
+                return;
+            }
+            
+            container.innerHTML = billsToShow.map(bill => {
+                const date = new Date(bill.date);
+                const lastModified = bill.lastModified ? new Date(bill.lastModified) : null;
+                return `
+                    <div class="bill-card">
+                        <h3>Bill ${bill.id}</h3>
+                        <div class="bill-meta">
+                            <div>Date: ${date.toLocaleDateString('en-IN')}</div>
+                            <div>Time: ${date.toLocaleTimeString('en-IN')}</div>
+                            ${lastModified ? `<div style="color: #e67e22;">Last Modified: ${lastModified.toLocaleDateString('en-IN')} ${lastModified.toLocaleTimeString('en-IN')}</div>` : ''}
+                            <div>Items: ${bill.items.length} | Qty: ${bill.totalQuantity}</div>
+                        </div>
+                        <div class="bill-items">
+                            ${bill.items.map(item => 
+                                `<div>${item.name} - ₹${item.price} × ${item.quantity} = ₹${item.total.toFixed(2)}</div>`
+                            ).join('')}
+                        </div>
+                        <div style="font-weight: bold; font-size: 18px; color: #2c5aa0; border-top: 1px solid #eee; padding-top: 10px;">
+                            Total: ₹${bill.totalAmount.toFixed(2)}
+                        </div>
+                        <div style="margin-top: 15px;">
+                            <button class="btn btn-primary" onclick="editBill('${bill.id}')" style="font-size: 12px; padding: 6px 12px; margin-right: 5px;">Edit</button>
+                            <button class="btn btn-danger" onclick="deleteBill('${bill.id}')" style="font-size: 12px; padding: 6px 12px;">Delete</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        function filterBills() {
+            const filterDate = document.getElementById('filterDate').value;
+            const filterPeriod = document.getElementById('filterPeriod').value;
+            const searchTerm = document.getElementById('searchBox').value.toLowerCase();
+            
+            let filteredBills = bills.slice();
+            
+            // Date filtering
+            if (filterPeriod !== 'all') {
+                const now = new Date();
+                const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                
+                filteredBills = filteredBills.filter(bill => {
+                    const billDate = new Date(bill.date);
+                    const billDay = new Date(billDate.getFullYear(), billDate.getMonth(), billDate.getDate());
+                    
+                    if (filterPeriod === 'today') {
+                        return billDay.getTime() === today.getTime();
+                    } else if (filterPeriod === 'week') {
+                        const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+                        return billDay >= weekAgo;
+                    } else if (filterPeriod === 'month') {
+                        const monthAgo = new Date(today.getFullYear(), today.getMonth() - 1, today.getDate());
+                        return billDay >= monthAgo;
+                    }
+                    return true;
+                });
+            }
+            
+            if (filterDate) {
+                const selectedDate = new Date(filterDate);
+                filteredBills = filteredBills.filter(bill => {
+                    const billDate = new Date(bill.date);
+                    return billDate.toDateString() === selectedDate.toDateString();
+                });
+            }
+            
+            // Search filtering
+            if (searchTerm) {
+                filteredBills = filteredBills.filter(bill => 
+                    bill.id.toLowerCase().includes(searchTerm) ||
+                    bill.items.some(item => item.name.toLowerCase().includes(searchTerm))
+                );
+            }
+            
+            displayBills(filteredBills.reverse());
+        }
+        
+        function deleteBill(billId) {
+            if (confirm(`Are you sure you want to delete bill ${billId}?`)) {
+                bills = bills.filter(bill => bill.id !== billId);
+                localStorage.setItem('omPatanjaliBills', JSON.stringify(bills));
+                loadBillHistory();
+                loadAnalytics();
+                loadDashboard();
+            }
+        }
+        
+        function editBill(billId) {
+            const bill = bills.find(b => b.id === billId);
+            if (!bill) {
+                alert('Bill not found!');
+                return;
+            }
+            
+            // Switch to billing page
+            showPage('billing');
+            document.querySelector('.nav-btn').classList.remove('active');
+            document.querySelector('.nav-btn').classList.add('active');
+            
+            // Set editing mode
+            editingBillId = billId;
+            document.getElementById('saveBillBtn').textContent = 'Update Bill';
+            document.getElementById('cancelEditBtn').style.display = 'inline-block';
+            
+            // Update bill info display
+            const billDate = new Date(bill.date);
+            document.getElementById('billNumber').textContent = bill.id;
+            document.getElementById('billDate').textContent = billDate.toLocaleDateString('en-IN');
+            document.getElementById('billTime').textContent = billDate.toLocaleTimeString('en-IN');
+            
+            // Clear existing rows
+            const tbody = document.getElementById('billBody');
+            tbody.innerHTML = '';
+            
+            // Populate with bill items
+            bill.items.forEach((item, index) => {
+                const row = document.createElement('tr');
+                row.className = 'item-row';
+                row.innerHTML = `
+                    <td><input type="text" value="${item.name}" onkeypress="handleEnter(event, this)"></td>
+                    <td><input type="number" step="0.01" min="0" value="${item.price}" oninput="calculateRowTotal(this)" onkeypress="handleEnter(event, this)"></td>
+                    <td><input type="number" min="0" value="${item.quantity}" oninput="calculateRowTotal(this)" onkeypress="handleEnter(event, this)"></td>
+                    <td class="total-cell">${item.total.toFixed(2)}</td>
+                `;
+                tbody.appendChild(row);
+            });
+            
+            // Add one empty row for additional items
+            addNewRow();
+            
+            // Recalculate totals
+            calculateGrandTotal();
+            
+            // Focus on first input
+            tbody.querySelector('input').focus();
+            
+            alert(`Editing Bill ${billId}. Make changes and click "Update Bill" to save.`);
+        }
+        
+        function cancelEdit() {
+            if (confirm('Are you sure you want to cancel editing? All changes will be lost.')) {
+                editingBillId = null;
+                document.getElementById('saveBillBtn').textContent = 'Save Bill';
+                document.getElementById('cancelEditBtn').style.display = 'none';
+                clearBill();
+                updateBillInfo();
+            }
+        }
+        
+        function clearAllBills() {
+            if (confirm('Are you sure you want to delete ALL bills? This action cannot be undone.')) {
+                bills = [];
+                localStorage.setItem('omPatanjaliBills', JSON.stringify(bills));
+                currentBillNumber = 1;
+                localStorage.setItem('currentBillNumber', '1');
+                loadBillHistory();
+                loadAnalytics();
+                loadDashboard();
+                updateBillInfo();
+            }
+        }
+        
+        // Analytics functions
+        function loadAnalytics() {
+            const now = new Date();
+            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+            const monthAgo = new Date(today.getFullYear(), today.getMonth() - 1, today.getDate());
+            
+            const todaysBills = bills.filter(bill => {
+                const billDate = new Date(bill.date);
+                const billDay = new Date(billDate.getFullYear(), billDate.getMonth(), billDate.getDate());
+                return billDay.getTime() === today.getTime();
+            });
+            
+            const weekBills = bills.filter(bill => {
+                const billDate = new Date(bill.date);
+                return billDate >= weekAgo;
+            });
+            
+            const monthBills = bills.filter(bill => {
+                const billDate = new Date(bill.date);
+                return billDate >= monthAgo;
+            });
+            
+            const todaySales = todaysBills.reduce((sum, bill) => sum + bill.totalAmount, 0);
+            const weekSales = weekBills.reduce((sum, bill) => sum + bill.totalAmount, 0);
+            const monthSales = monthBills.reduce((sum, bill) => sum + bill.totalAmount, 0);
+            
+            document.getElementById('todaySales').textContent = `₹ ${todaySales.toFixed(2)}`;
+            document.getElementById('weekSales').textContent = `₹ ${weekSales.toFixed(2)}`;
+            document.getElementById('monthSales').textContent = `₹ ${monthSales.toFixed(2)}`;
+            document.getElementById('totalBills').textContent = bills.length;
+        }
+        
+        function calculateCustomRange() {
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            
+            if (!startDate || !endDate) {
+                alert('Please select both start and end dates.');
+                return;
+            }
+            
+            const start = new Date(startDate);
+            const end = new Date(endDate);
+            end.setHours(23, 59, 59, 999); // Include the entire end date
+            
+            if (start > end) {
+                alert('Start date cannot be after end date.');
+                return;
+            }
+            
+            const rangeBills = bills.filter(bill => {
+                const billDate = new Date(bill.date);
+                return billDate >= start && billDate <= end;
+            });
+            
+            const totalSales = rangeBills.reduce((sum, bill) => sum + bill.totalAmount, 0);
+            const billCount = rangeBills.length;
+            const average = billCount > 0 ? totalSales / billCount : 0;
+            
+            document.getElementById('customSales').textContent = `₹ ${totalSales.toFixed(2)}`;
+            document.getElementById('customBillCount').textContent = billCount;
+            document.getElementById('customAverage').textContent = `₹ ${average.toFixed(2)}`;
+            document.getElementById('customRangeResult').style.display = 'block';
+        }
+        
+        // Dashboard functions
+        function loadDashboard() {
+            const totalRevenue = bills.reduce((sum, bill) => sum + bill.totalAmount, 0);
+            const totalBillsCount = bills.length;
+            const avgBillValue = totalBillsCount > 0 ? totalRevenue / totalBillsCount : 0;
+            const totalItemsSold = bills.reduce((sum, bill) => sum + bill.totalQuantity, 0);
+            
+            document.getElementById('totalRevenue').textContent = `₹ ${totalRevenue.toFixed(2)}`;
+            document.getElementById('dashTotalBills').textContent = totalBillsCount;
+            document.getElementById('avgBillValue').textContent = `₹ ${avgBillValue.toFixed(2)}`;
+            document.getElementById('totalItemsSold').textContent = totalItemsSold;
+            
+            // Recent Activity
+            const recentBills = bills.slice(-5).reverse();
+            const recentActivity = document.getElementById('recentActivity');
+            
+            if (recentBills.length === 0) {
+                recentActivity.innerHTML = '<p style="color: #666;">No recent activity. Create your first bill!</p>';
+            } else {
+                recentActivity.innerHTML = recentBills.map(bill => {
+                    const date = new Date(bill.date);
+                    return `
+                        <div style="padding: 10px; border-left: 3px solid #2c5aa0; margin-bottom: 10px; background: #f8f9fa;">
+                            <strong>Bill ${bill.id}</strong> - ₹${bill.totalAmount.toFixed(2)}
+                            <div style="font-size: 12px; color: #666;">
+                                ${date.toLocaleDateString('en-IN')} at ${date.toLocaleTimeString('en-IN')} 
+                                • ${bill.items.length} items • ${bill.totalQuantity} total quantity
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+        }
+    </script>
+</body>
+</html>
